@@ -1,0 +1,14 @@
+requests>=2.25.0
+httpx>=0.24.0
+cryptography>=38.0.0
+typing-extensions>=4.0.0
+PyJWT>=2.9.0
+wget>=3.2
+loguru>=0.7.0
+openai>=2.0.0
+pymerkle>=6.1.0
+jwcrypto>=1.5.6
+volcengine-python-sdk>=4.0.4
+tos>=2.8.0
+msgpack>=1.0.0
+huggingface-hub>=0.23

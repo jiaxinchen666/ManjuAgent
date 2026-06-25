@@ -1,0 +1,32 @@
+Metadata-Version: 2.4
+Name: bytedance.volcengine_aicc_sdk
+Version: 0.0.21
+Summary: Secure sdk for Jeddak confidential computing
+Author-email: Sun Yong <sunyong.ty@bytedance.com>
+Project-URL: Homepage, https://code.byted.org/security/volcengine_aicc_sdk
+Project-URL: Source, https://code.byted.org/security/volcengine_aicc_sdk.git
+Classifier: Development Status :: 3 - Alpha
+Classifier: License :: Other/Proprietary License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Security
+Classifier: Topic :: Security :: Cryptography
+Requires-Python: >=3.9
+Requires-Dist: cryptography<100,>=38.0.0
+Requires-Dist: requests<100,>=2.22
+Requires-Dist: typing_extensions~=4.12
+Requires-Dist: tos~=2.8.1
+Requires-Dist: msgpack~=1.0.8
+Requires-Dist: huggingface_hub<1,>=0.23
+Requires-Dist: loguru~=0.7.3
+Requires-Dist: volcengine-python-sdk<=100,>=4.0.4
+Requires-Dist: jwcrypto~=1.5.6
+Requires-Dist: PyJWT>=2.9.0
+Requires-Dist: pymerkle~=6.1.0
+Requires-Dist: openai<=100,>=2.0.0
+Requires-Dist: wget~=3.2
+Provides-Extra: test
+Requires-Dist: coverage~=7.6; extra == "test"
+Requires-Dist: pytest~=8.3; extra == "test"
+Requires-Dist: pytest-mock~=3.14; extra == "test"
+Requires-Dist: responses~=0.25; extra == "test"

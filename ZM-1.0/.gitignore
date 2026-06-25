@@ -1,0 +1,11 @@
+.DS_Store
+generated-videos/
+test-results/
+tmp/
+python_deps/
+__pycache__/
+aicc_log/
+jsc_log/
+*.log
+scripts/*_分析.json
+**/.claude/settings.local.json

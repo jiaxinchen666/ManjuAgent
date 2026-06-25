@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>造梦大师 Agent - 影视工业级短剧 AI 生成工具</title>
+  <script src="/tailwind.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            gold: {
+              50: '#FFF9E6',
+              100: '#FFF0B3',
+              200: '#FFE066',
+              300: '#FFD633',
+              400: '#FFCC00',
+              500: '#D4A843',
+              600: '#B8860B',
+              700: '#8B6914',
+              800: '#5C4A1E',
+              900: '#3D2E0A',
+            },
+            slate: {
+              850: '#172033',
+              950: '#0B1120',
+            }
+          },
+          fontFamily: {
+            display: ['"Noto Serif SC"', 'serif'],
+            body: ['"Inter"', '"Noto Sans SC"', 'sans-serif'],
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.4s ease-out forwards',
+            'slide-up': 'slideUp 0.3s ease-out forwards',
+            'slide-down': 'slideDown 0.3s ease-out forwards',
+            'pulse-gold': 'pulseGold 2s ease-in-out infinite',
+            'shimmer': 'shimmer 2s linear infinite',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.loli.net" crossorigin />
+  <link href="https://fonts.loli.net/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-slate-950 text-gray-200 font-body min-h-screen antialiased">
+
+  <!-- ========== 全局导航栏 TopNav ========== -->
+  <nav id="topNav" class="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-6 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-xl">
+    <!-- 左侧: Logo + 剧名 -->
+    <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('home')">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-gold-500 to-gold-700 flex items-center justify-center shadow-lg shadow-gold-500/20">
+        <svg class="w-5 h-5 text-slate-950" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      </div>
+      <h1 class="text-lg font-semibold text-white tracking-wide">造梦大师 <span class="text-gold-500 text-sm font-normal">Agent</span></h1>
+    </div>
+
+    <!-- 中部: 导航菜单 -->
+    <div class="flex items-center gap-1" id="navMenu">
+      <button class="nav-btn" data-page="home" onclick="navigateTo('home')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        首页
+      </button>
+      <button class="nav-btn" data-page="new-project" onclick="navigateTo('new-project')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+        新建项目
+      </button>
+      <button class="nav-btn hidden" data-page="script-analysis" onclick="navigateTo('script-analysis')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        剧本分析
+      </button>
+      <button class="nav-btn hidden" data-page="assets" onclick="navigateTo('assets')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        角色&amp;场景
+      </button>
+      <button class="nav-btn hidden" data-page="space-report" onclick="navigateTo('space-report')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+        空间报告
+      </button>
+      <button class="nav-btn hidden" data-page="shot-production" onclick="navigateTo('shot-production')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 4v16M17 4v16M3 8h4m10 0h4M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/></svg>
+        分镜制作
+      </button>
+      <button class="nav-btn hidden" data-page="episodes" onclick="navigateTo('episodes')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+        分集视频
+      </button>
+    </div>
+
+    <!-- 右侧: 积分 + 设置 + 用户 -->
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/80 border border-gold-500/30">
+        <svg class="w-4 h-4 text-gold-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span class="text-gold-400 font-semibold text-sm" id="creditsDisplay">100,000</span>
+        <span class="text-gray-500 text-xs">积分</span>
+      </div>
+      <button class="p-2 rounded-lg hover:bg-slate-800 transition-colors" onclick="navigateTo('settings')" title="系统设置">
+        <svg class="w-5 h-5 text-gray-400 hover:text-gold-500 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+      <button class="p-2 rounded-lg hover:bg-slate-800 transition-colors" onclick="navigateTo('user-center')" title="用户中心">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gold-500 to-gold-700 flex items-center justify-center text-slate-950 text-sm font-bold">U</div>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========== Toast 容器 ========== -->
+  <div id="toastContainer" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 items-center"></div>
+
+  <!-- ========== Modal 容器 ========== -->
+  <div id="modalOverlay" class="fixed inset-0 z-[90] bg-black/70 backdrop-blur-sm hidden items-center justify-center">
+    <div id="modalContent" class="bg-slate-900 border border-slate-700/60 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl shadow-black/50 animate-fade-in"></div>
+  </div>
+
+  <!-- ========== 全屏 Loading ========== -->
+  <div id="fullscreenLoading" class="fixed inset-0 z-[80] bg-slate-950/95 backdrop-blur-md hidden items-center justify-center flex-col gap-6">
+    <div class="relative">
+      <div class="w-20 h-20 rounded-full border-2 border-gold-500/20 border-t-gold-500 animate-spin"></div>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-full bg-gold-500/10 animate-pulse"></div>
+      </div>
+    </div>
+    <p class="text-gold-400 text-lg font-display" id="loadingText">AI 正在解析剧本...</p>
+    <p class="text-gray-500 text-sm">请稍候，造梦引擎全力运转中</p>
+  </div>
+
+  <!-- ========== 主内容区域 ========== -->
+  <main class="pt-16 min-h-screen">
+
+    <!-- ====== Page 0: 首页 - 项目库 ====== -->
+    <section id="page-home" class="page-section animate-fade-in">
+      <div class="max-w-6xl mx-auto px-6 py-10">
+        <div class="mb-10">
+          <h2 class="text-3xl font-display font-bold text-white mb-1">项目库</h2>
+          <p class="text-gray-500 text-sm">选择项目，或新建一个造梦之旅</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <!-- ── 新建项目（第一位） ── -->
+          <div class="group rounded-2xl border-2 border-dashed border-slate-700/60 hover:border-gold-500/50 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center min-h-[240px] gap-4 hover:bg-gold-500/5"
+               onclick="navigateTo('new-project')">
+            <div class="w-14 h-14 rounded-2xl bg-slate-800/80 group-hover:bg-gold-500/10 border border-slate-700/60 group-hover:border-gold-500/40 flex items-center justify-center transition-all">
+              <svg class="w-7 h-7 text-gray-500 group-hover:text-gold-500 transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+            </div>
+            <div class="text-center">
+              <p class="text-gray-300 group-hover:text-white font-medium transition-colors">新建项目</p>
+              <p class="text-xs text-gray-600 mt-1">上传剧本，快速开始</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== Page 1: 新建项目 ====== -->
+    <section id="page-new-project" class="page-section animate-fade-in">
+      <div class="max-w-6xl mx-auto px-6 py-10">
+        <!-- 页面标题 -->
+        <div class="text-center mb-10">
+          <h2 class="text-3xl font-display font-bold text-white mb-2">开启你的 <span class="text-gold-500">造梦</span> 之旅</h2>
+          <p class="text-gray-500">上传剧本，定义风格，让 AI 为你拆解每一帧画面</p>
+        </div>
+
+        <div class="max-w-3xl mx-auto space-y-6">
+          <div class="space-y-6">
+            <!-- 项目名称 -->
+            <div class="card">
+              <label class="block text-sm font-medium text-gray-400 mb-2">项目名称</label>
+              <input type="text" id="projectName" placeholder="例如：《逆光而行》第一集" class="input-field w-full" />
+            </div>
+
+            <!-- 影像风格 -->
+            <div class="card">
+              <label class="block text-sm font-medium text-gray-400 mb-3">影像风格</label>
+              <div class="flex flex-wrap gap-3" id="videoStyleGroup">
+                <button class="tag-btn active" data-value="真人写实">真人写实</button>
+                <button class="tag-btn" data-value="二维动漫">二维动漫</button>
+                <button class="tag-btn" data-value="3D动漫">3D动漫</button>
+                <button class="tag-btn" data-value="CG游戏">CG游戏</button>
+              </div>
+            </div>
+
+            <!-- 分镜风格 -->
+            <div class="card">
+              <label class="block text-sm font-medium text-gray-400 mb-3">分镜风格</label>
+              <div class="flex flex-wrap gap-3" id="shotStyleGroup">
+                <button class="tag-btn active" data-value="悬疑">悬疑</button>
+                <button class="tag-btn" data-value="惊悚">惊悚</button>
+                <button class="tag-btn" data-value="动作">动作</button>
+                <button class="tag-btn" data-value="爱情">爱情</button>
+                <button class="tag-btn" data-value="手持肩抗">手持肩抗</button>
+                <button class="tag-btn" data-value="稳定顺滑">稳定顺滑</button>
+                <button class="tag-btn" data-value="快切镜头">快切镜头</button>
+                <button class="tag-btn" data-value="长镜头">长镜头</button>
+                <button class="tag-btn" data-value="自定义">自定义</button>
+              </div>
+            </div>
+
+            <!-- 剧本上传 -->
+            <div class="card" id="scriptDropZone">
+              <div class="flex items-center justify-between mb-3">
+                <label class="block text-sm font-medium text-gray-400">剧本内容</label>
+                <label class="cursor-pointer flex items-center gap-1.5 text-xs text-gold-500 hover:text-gold-400 transition-colors px-3 py-1.5 rounded-lg border border-gold-500/30 hover:border-gold-500/60 bg-gold-500/5">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                  点击选择文件
+                  <input type="file" id="scriptFileInput" accept=".docx,.txt,.md,.fountain" class="hidden" onchange="handleFileUpload(event)" />
+                </label>
+              </div>
+
+              <!-- 拖放提示区 -->
+              <div id="scriptDropHint" class="mb-3 border-2 border-dashed border-slate-700/60 rounded-xl p-5 text-center transition-all duration-200 cursor-pointer" onclick="document.getElementById('scriptFileInput').click()">
+                <svg class="w-8 h-8 text-gray-600 mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                <p class="text-sm text-gray-500">将 <span class="text-gold-400">.docx</span> / <span class="text-gold-400">.txt</span> 文件拖到这里</p>
+                <p class="text-xs text-gray-600 mt-1">或点击此处选择文件</p>
+              </div>
+
+              <textarea id="scriptInput" rows="8" placeholder="也可以直接在这里粘贴剧本内容..." class="input-field w-full resize-none custom-scrollbar"></textarea>
+              <div class="flex items-center justify-between mt-3">
+                <div class="text-sm">
+                  <span class="text-gray-500">字符数：</span>
+                  <span class="text-gold-400 font-medium" id="charCount">0</span>
+                  <span class="text-gray-600 mx-2">|</span>
+                  <span class="text-gray-500">预估分析积分：</span>
+                  <span class="text-gold-400 font-medium" id="estimatedCredits">0</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 分析按钮 -->
+            <div class="space-y-2">
+              <button id="analyzeBtn" class="btn-primary w-full text-lg py-4" onclick="handleAnalyzeScript()">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                剧本分析
+                <span class="ml-2 text-sm opacity-80" id="analyzeBtnCost">0 积分</span>
+              </button>
+              <p class="text-xs text-gray-500 text-center leading-relaxed">请确认上传剧本有合法版权。剧本每100字符消耗5积分，实际消耗与最终上传的剧本字符相关。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== Page 2: 剧本分析页 ====== -->
+    <section id="page-script-analysis" class="page-section hidden">
+      <div class="max-w-5xl mx-auto px-6 py-10 animate-fade-in">
+
+        <!-- 剧本已载入但未分析时的提示横幅 -->
+        <div id="analysisReadyBanner" class="hidden mb-6 rounded-xl border border-gold-500/30 bg-gold-500/5 px-5 py-4 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">📄</span>
+            <div>
+              <p class="text-sm font-medium text-white">剧本已载入，尚未进行AI分析</p>
+              <p class="text-xs text-gray-400 mt-0.5">人物小传已预填。点击右侧按钮让AI编剧深度解析本集剧本结构与镜头拆分。</p>
+            </div>
+          </div>
+          <button class="btn-primary shrink-0 text-sm" onclick="handleAnalyzeFromPage()">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            一键AI编剧分析
+          </button>
+        </div>
+
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-2xl font-display font-bold text-white">剧本分析 <span class="text-gold-500">结果</span></h2>
+          <div class="flex items-center gap-3">
+            <div class="flex flex-col items-end mr-2">
+              <button class="btn-secondary" onclick="handleSaveAnalysis()">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                修改 &amp; 保存
+                <span class="text-xs opacity-70 ml-1" id="analysisSaveCost">0 积分</span>
+              </button>
+              <p class="text-[10px] text-gray-500 mt-1">每次修改需要算力，每100字符消耗2积分</p>
+            </div>
+            <button class="btn-primary" onclick="startShotWorkflow()">
+              镜头制作
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="card">
+            <label class="block text-sm font-medium text-gold-500 mb-2">剧本名</label>
+            <input type="text" id="analysisTitle" class="input-field w-full" value="" />
+          </div>
+          <div class="card">
+            <label class="block text-sm font-medium text-gold-500 mb-2">题材类型</label>
+            <input type="text" id="analysisGenre" class="input-field w-full" value="" />
+          </div>
+          <div class="card">
+            <label class="block text-sm font-medium text-gold-500 mb-2">影像风格</label>
+            <input type="text" id="analysisVideoStyle" class="input-field w-full" value="" readonly />
+          </div>
+          <div class="card">
+            <label class="block text-sm font-medium text-gold-500 mb-2">分镜风格</label>
+            <input type="text" id="analysisShotStyle" class="input-field w-full" value="" readonly />
+          </div>
+          <div class="card">
+            <label class="block text-sm font-medium text-gold-500 mb-2">画面比例</label>
+            <div class="flex gap-3" id="aspectRatioGroup">
+              <button class="tag-btn active" data-value="16:9" onclick="selectAspectRatio(this)">16:9</button>
+              <button class="tag-btn" data-value="9:16" onclick="selectAspectRatio(this)">9:16</button>
+              <button class="tag-btn" data-value="1:1" onclick="selectAspectRatio(this)">1:1</button>
+              <button class="tag-btn" data-value="4:3" onclick="selectAspectRatio(this)">4:3</button>
+            </div>
+          </div>
+          <div class="card md:col-span-2">
+            <label class="block text-sm font-medium text-gold-500 mb-2">梗概</label>
+            <textarea id="analysisSynopsis" rows="4" class="input-field w-full resize-none custom-scrollbar"></textarea>
+          </div>
+          <div class="card md:col-span-2">
+            <label class="block text-sm font-medium text-gold-500 mb-2">故事结构分析 <span class="text-xs text-gray-500 font-normal ml-1">三幕结构</span></label>
+            <textarea id="analysisStructure" rows="3" class="input-field w-full resize-none custom-scrollbar"></textarea>
+          </div>
+          <div class="card md:col-span-2">
+            <label class="block text-sm font-medium text-gold-500 mb-2">人物小传</label>
+            <textarea id="analysisCharBios" rows="5" class="input-field w-full resize-none custom-scrollbar"></textarea>
+          </div>
+          <div class="card md:col-span-2">
+            <label class="block text-sm font-medium text-gold-500 mb-2">亮点分析</label>
+            <textarea id="analysisHighlights" rows="4" class="input-field w-full resize-none custom-scrollbar"></textarea>
+          </div>
+          <div class="card md:col-span-2">
+            <label class="block text-sm font-medium text-gold-500 mb-2">AI生成适配说明 <span class="text-xs text-gray-500 font-normal ml-1">AI导演注意事项</span></label>
+            <textarea id="analysisAiAdapt" rows="3" class="input-field w-full resize-none custom-scrollbar"></textarea>
+          </div>
+          <div class="card md:col-span-2">
+            <label class="block text-sm font-medium text-gold-500 mb-2">剧本原文</label>
+            <textarea id="analysisOriginal" rows="8" class="input-field w-full resize-none custom-scrollbar"></textarea>
+          </div>
+        </div>
+
+        <!-- 角色 & 场景资产（分析后自动生成） -->
+        <div id="analysisAssetsSection" class="mt-8 hidden">
+          <div class="flex items-center gap-3 mb-4">
+            <h3 class="text-lg font-display font-bold text-white">角色 <span class="text-gold-500">&amp;</span> 场景</h3>
+            <span class="text-xs text-gray-500 bg-slate-800/60 px-2 py-1 rounded-full">根据剧本自动提取</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 角色列表 -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-sm font-semibold text-white flex items-center gap-2">
+                  <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                  角色列表
+                  <span id="analysisCharCount" class="text-xs text-gray-500 font-normal"></span>
+                </h4>
+                <button class="text-xs text-gold-500 hover:text-gold-400 transition-colors" onclick="openCharacterModal()">+ 手动添加</button>
+              </div>
+              <div id="analysisCharacterList" class="space-y-2"></div>
+            </div>
+            <!-- 场景列表 -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-sm font-semibold text-white flex items-center gap-2">
+                  <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  场景列表
+                  <span id="analysisSceneCount" class="text-xs text-gray-500 font-normal"></span>
+                </h4>
+                <button class="text-xs text-gold-500 hover:text-gold-400 transition-colors" onclick="openSceneModal()">+ 手动添加</button>
+              </div>
+              <div id="analysisSceneList" class="space-y-2"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====== Page 3: 角色&场景资产页 ====== -->
+    <section id="page-assets" class="page-section hidden">
+      <div class="max-w-5xl mx-auto px-6 py-10 animate-fade-in">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-2xl font-display font-bold text-white">角色 <span class="text-gold-500">&amp;</span> 场景</h2>
+          <span class="text-xs text-gray-500">点击卡片可编辑</span>
+        </div>
+
+        <!-- 角色区 -->
+        <div class="mb-10">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              角色
+              <span id="assetsCharCountBadge" class="text-xs text-gray-500 font-normal"></span>
+            </h3>
+            <button class="btn-secondary text-xs py-1.5 px-3" onclick="openCharacterModal()">+ 添加角色</button>
+          </div>
+          <div id="assetsCharGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div class="text-xs text-gray-500 col-span-full py-6 text-center">请先完成剧本分析，角色将自动提取</div>
+          </div>
+        </div>
+
+        <!-- 场景区 -->
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              场景
+              <span id="assetsSceneCountBadge" class="text-xs text-gray-500 font-normal"></span>
+            </h3>
+            <button class="btn-secondary text-xs py-1.5 px-3" onclick="openSceneModal()">+ 添加场景</button>
+          </div>
+          <div id="assetsSceneGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div class="text-xs text-gray-500 col-span-full py-6 text-center">请先完成剧本分析，场景将自动提取</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== Page: AI 处理中 ====== -->
+    <section id="page-ai-loading" class="page-section hidden">
+      <div class="flex flex-col items-center justify-center h-[calc(100vh-4rem)] gap-10">
+
+        <!-- 动态圆环 -->
+        <div class="relative w-24 h-24">
+          <svg class="w-full h-full animate-spin" viewBox="0 0 96 96" fill="none">
+            <circle cx="48" cy="48" r="40" stroke="#1e293b" stroke-width="8"/>
+            <path d="M48 8 A40 40 0 0 1 88 48" stroke="#d4af37" stroke-width="8" stroke-linecap="round"/>
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <svg class="w-8 h-8 text-gold-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 标题 -->
+        <div class="text-center">
+          <h2 class="text-xl font-bold text-white font-display mb-2">AI 正在制作分镜方案</h2>
+          <p id="aiLoadingStatus" class="text-sm text-gray-400">准备中...</p>
+        </div>
+
+        <!-- 步骤进度 -->
+        <div class="flex flex-col gap-4 w-72">
+          <div class="flex items-center gap-3" id="loadStep1">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center bg-emerald-500/20 border border-emerald-500/50 shrink-0">
+              <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <span class="text-sm text-emerald-400">编剧已完成剧本分析</span>
+          </div>
+          <div class="flex items-center gap-3" id="loadStep2">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center bg-slate-700 border border-slate-600 shrink-0" id="loadStep2Icon">
+              <svg class="w-3 h-3 text-gray-500 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </div>
+            <span class="text-sm text-gray-300" id="loadStep2Label">AI导演直接生成分镜提示词...</span>
+          </div>
+          <div class="flex items-center gap-3 opacity-40" id="loadStep3">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center bg-slate-800 border border-slate-700 shrink-0" id="loadStep3Icon">
+              <div class="w-2 h-2 rounded-full bg-slate-600"></div>
+            </div>
+            <span class="text-sm text-gray-500" id="loadStep3Label">（已与步骤2合并）</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====== Page 3.5: 空间报告页（独立页面） ====== -->
+    <section id="page-space-report" class="page-section hidden">
+      <div class="max-w-6xl mx-auto px-6 py-8 animate-fade-in">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-2xl font-display font-bold text-white mb-1">📋 空间理解报告</h2>
+            <p class="text-sm text-gray-500">AI 已生成场景空间理解报告，检查 / 调整后点击下方"确认并继续"，开始生成分镜提示词</p>
+          </div>
+          <button class="btn-secondary text-sm py-2 px-4" onclick="navigateTo(AppState.previousPage || 'new-project')">返回</button>
+        </div>
+        <div id="spaceReportBody" class="space-y-6"></div>
+        <div class="mt-8 sticky bottom-4">
+          <button id="spaceReportConfirmBtn" class="btn-primary w-full py-4 text-base font-semibold shadow-2xl shadow-gold-500/20" onclick="confirmSpaceReportPage()">
+            ✓ 确认空间理解报告，开始生成分镜
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== Page 4: 分镜制作页 ====== -->
+    <section id="page-shot-production" class="page-section hidden">
+      <div class="flex h-[calc(100vh-4rem)] animate-fade-in">
+
+        <!-- 左侧: 资产库 -->
+        <aside class="w-52 border-r border-slate-800/60 bg-slate-900/40 flex flex-col overflow-hidden shrink-0">
+          <div class="p-3 border-b border-slate-800/60 flex items-center justify-between">
+            <h3 class="text-xs font-semibold text-white flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-gold-500" fill="currentColor" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+              资产库
+            </h3>
+          </div>
+          <div class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-4">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">角色</span>
+                <button class="text-xs text-gold-500 hover:text-gold-400" onclick="addAsset('character')">+</button>
+              </div>
+              <div id="sidebarCharacters" class="grid grid-cols-2 gap-1.5"></div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">场景</span>
+                <button class="text-xs text-gold-500 hover:text-gold-400" onclick="addAsset('scene')">+</button>
+              </div>
+              <div id="sidebarScenes" class="grid grid-cols-2 gap-1.5"></div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- 右侧主区: 分镜列表 + 底部AI对话框 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+
+          <!-- 分镜列表（可滚动） -->
+          <div class="flex-1 overflow-y-auto custom-scrollbar">
+            <div class="p-4">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-display font-bold text-white">分镜 <span class="text-gold-500">制作</span></h2>
+                <button class="btn-secondary text-xs py-1.5 px-3" onclick="addNewShot()">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+                  + 新增分镜
+                </button>
+              </div>
+              <!-- 全局规则框 -->
+              <div id="globalPromptBox"></div>
+              <div id="shotCards" class="space-y-3"></div>
+            </div>
+          </div>
+
+          <!-- 底部 AI 对话框（Claude 风格） -->
+          <div class="border-t border-slate-800/60 bg-slate-950/80 flex flex-col shrink-0">
+            <!-- 消息历史（最高 44 显示，超出滚动） -->
+            <div id="agentChatMessages" class="max-h-44 overflow-y-auto custom-scrollbar px-4 py-2 space-y-2">
+              <p class="text-xs text-gray-600 text-center py-2">🎬 分镜AI助手 · 对我说想要的改动，例如："把16-1-3改成特写" / "所有镜头改成手持风格"</p>
+            </div>
+            <!-- 输入行 -->
+            <div class="px-4 py-3 flex items-end gap-3 border-t border-slate-800/40">
+              <div id="agentTokenCounter" class="text-[10px] text-gray-600 hidden self-center">
+                <span id="agentTotalTokens" class="text-gray-400">0</span> tokens
+              </div>
+              <textarea
+                id="agentChatInput"
+                rows="2"
+                placeholder="对分镜Agent说：改第 16-1-3 镜头的景别为特写..."
+                class="input-field flex-1 text-sm resize-none custom-scrollbar"
+                onkeydown="handleAgentInputKeydown(event)"
+              ></textarea>
+              <button class="btn-primary text-sm py-2 px-5 shrink-0 self-end" onclick="sendAgentMessage()">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                发送
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== Page 4: 分集视频页 ====== -->
+    <section id="page-episodes" class="page-section hidden">
+      <div class="max-w-6xl mx-auto px-6 py-10 animate-fade-in">
+        <!-- 子导航 -->
+        <div class="flex items-center gap-1 mb-8 bg-slate-900/60 rounded-xl p-1 border border-slate-800/60 w-fit">
+          <button class="sub-nav-btn active" data-subtab="videos" onclick="switchEpisodeTab('videos')">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            分集视频
+          </button>
+          <button class="sub-nav-btn" data-subtab="analysis" onclick="switchEpisodeTab('analysis')">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            剧本分析
+          </button>
+          <button class="sub-nav-btn" data-subtab="assets" onclick="switchEpisodeTab('assets')">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            角色和场景
+          </button>
+        </div>
+
+        <!-- 子Tab内容：分集视频 -->
+        <div id="episodeTab-videos">
+          <h2 class="text-2xl font-display font-bold text-white mb-6">分集 <span class="text-gold-500">视频</span></h2>
+          <div id="episodeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 动态生成 -->
+          </div>
+          <!-- 空状态 -->
+          <div id="episodeEmpty" class="flex flex-col items-center justify-center py-20">
+            <div class="w-48 h-32 border-2 border-dashed border-slate-700 rounded-xl flex items-center justify-center mb-6">
+              <svg class="w-12 h-12 text-slate-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            </div>
+            <p class="text-gray-500 mb-4">还没有生成的视频片段</p>
+            <button class="btn-primary" onclick="navigateTo('shot-production')">
+              去制作
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 子Tab内容：剧本分析快捷入口 -->
+        <div id="episodeTab-analysis" class="hidden">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-display font-bold text-white">剧本 <span class="text-gold-500">分析</span></h2>
+            <button class="btn-primary text-sm" onclick="navigateTo('script-analysis')">查看完整分析 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></button>
+          </div>
+          <div class="card" id="episodeAnalysisSummary">
+            <p class="text-gray-500 text-sm">暂无剧本分析数据，请先在新建项目页面进行剧本分析。</p>
+          </div>
+        </div>
+
+        <!-- 子Tab内容：角色和场景 -->
+        <div id="episodeTab-assets" class="hidden">
+          <h2 class="text-2xl font-display font-bold text-white mb-6">角色 <span class="text-gold-500">&amp;</span> 场景</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 角色列表 -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+                  <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                  角色列表
+                </h3>
+                <button class="text-xs text-gold-500 hover:text-gold-400" onclick="openCharacterModal()">+ 上传角色</button>
+              </div>
+              <div id="episodeCharacterList" class="space-y-3">
+                <p class="text-xs text-gray-500">暂无角色数据</p>
+              </div>
+            </div>
+            <!-- 场景列表 -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+                  <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  场景列表
+                </h3>
+                <button class="text-xs text-gold-500 hover:text-gold-400" onclick="openSceneModal()">+ 上传场景</button>
+              </div>
+              <div id="episodeSceneList" class="space-y-3">
+                <p class="text-xs text-gray-500">暂无场景数据</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== Page 5: 设置页 ====== -->
+    <section id="page-settings" class="page-section hidden">
+      <div class="max-w-3xl mx-auto px-6 py-10 animate-fade-in">
+        <h2 class="text-2xl font-display font-bold text-white mb-8">系统 <span class="text-gold-500">设置</span></h2>
+
+        <!-- 隐藏的旧 API Key 区块（保留 DOM 占位，避免脚本异常） -->
+        <div class="card mb-6 border-purple-500/20 hidden">
+          <div class="flex items-start gap-3 mb-3">
+            <div class="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0 mt-0.5">
+              <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-white font-semibold text-sm mb-0.5">Anthropic API Key <span class="text-purple-400 text-xs font-normal ml-1">AI导演工作流专用</span></h3>
+              <p class="text-xs text-gray-500">用于编剧分析、总导演建分镜、AI导演写提示词。在 <a href="https://console.anthropic.com" target="_blank" class="text-purple-400 hover:underline">console.anthropic.com</a> 获取。</p>
+            </div>
+          </div>
+          <div class="relative">
+            <input type="password" id="anthropicApiKey" placeholder="sk-ant-xxxxxxxxxxxx" class="input-field w-full pr-12" />
+            <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gold-500 transition-colors" onclick="togglePasswordVisibility('anthropicApiKey')">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+          </div>
+          <button class="mt-3 btn-secondary text-sm w-full" onclick="saveAnthropicKey()">保存 API Key</button>
+        </div>
+
+        <!-- ══════ 计费说明 ══════ -->
+        <div class="space-y-6">
+          <div class="card border-gold-500/20">
+            <div class="flex items-start gap-3 mb-4">
+              <div class="w-10 h-10 rounded-lg bg-gold-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                <svg class="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              </div>
+              <div>
+                <h3 class="text-white font-semibold mb-1">平台代付 · 统一接入</h3>
+                <p class="text-xs text-gray-500 leading-relaxed">所有 AI 工作流统一使用 <span class="text-gold-400 font-semibold">DeepSeek v4 Flash</span>，无需配置 API Key，购买积分即可使用。</p>
+              </div>
+            </div>
+            <div class="bg-slate-800/40 rounded-lg p-4 space-y-3 text-sm">
+              <div class="flex justify-between text-gray-400">
+                <span>剧本分析 / 修改</span>
+                <span class="text-gold-400">100字符 = 5积分（首次） / 2积分（修改）</span>
+              </div>
+              <div class="flex justify-between text-gray-400">
+                <span>开始造梦（核心提示词）</span>
+                <span class="text-gold-400">600 积分 / 次</span>
+              </div>
+              <div class="flex justify-between text-gray-400">
+                <span>视频生成 720P</span>
+                <span class="text-gold-400">105 积分 / 秒</span>
+              </div>
+              <div class="flex justify-between text-gray-400">
+                <span>视频生成 1080P</span>
+                <span class="text-gold-400">210 积分 / 秒</span>
+              </div>
+              <div class="border-t border-slate-700/50 pt-3 flex justify-between text-gray-300 font-medium">
+                <span>汇率</span>
+                <span class="text-gold-500">1 元 = 100 积分</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 剧本分析模型（信息展示） -->
+          <div class="card">
+            <label class="block text-sm font-medium text-gold-500 mb-2">剧本分析模型</label>
+            <p class="text-xs text-gray-500 mb-3">当前接入并使用的大模型</p>
+            <div class="input-field w-full flex items-center justify-between cursor-default">
+              <span>DeepSeek v4 Flash</span>
+              <span class="text-xs text-emerald-400">● 已接入</span>
+            </div>
+          </div>
+
+          <!-- 视频生成模型选择 -->
+          <div class="card">
+            <label class="block text-sm font-medium text-gold-500 mb-2">视频生成模型</label>
+            <p class="text-xs text-gray-500 mb-3">选择用于视频生成的 AI 模型</p>
+            <div class="relative">
+              <select id="videoModel" class="input-field w-full appearance-none pr-10 cursor-pointer">
+                <option value="seedance">Seedance 2.0（推荐）</option>
+                <option value="happyhorse">HappyHorse 1.0</option>
+                <option value="kling">可灵 AI</option>
+                <option value="runway">Runway Gen-3</option>
+              </select>
+              <svg class="w-4 h-4 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button class="btn-secondary flex-1" onclick="navigateTo(AppState.previousPage && AppState.previousPage !== 'settings' ? AppState.previousPage : 'new-project')">取消</button>
+            <button class="btn-primary flex-1" onclick="saveSettings()">保存设置</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====== Page 6: 用户中心 ====== -->
+    <section id="page-user-center" class="page-section hidden">
+      <div class="max-w-2xl mx-auto px-6 py-10 animate-fade-in">
+        <h2 class="text-2xl font-display font-bold text-white mb-8">用户 <span class="text-gold-500">中心</span></h2>
+        <div class="card text-center">
+          <div class="w-24 h-24 rounded-full bg-gradient-to-br from-gold-500 to-gold-700 flex items-center justify-center text-slate-950 text-3xl font-bold mx-auto mb-4 shadow-xl shadow-gold-500/20">
+            U
+          </div>
+          <h3 class="text-xl font-semibold text-white mb-1">创作者</h3>
+          <p class="text-gray-500 text-sm mb-6">user@zaomeng.ai</p>
+
+          <!-- 积分面板 -->
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-slate-800/50 rounded-xl p-5">
+              <p class="text-gray-400 text-xs mb-2">剩余算力积分</p>
+              <p class="text-3xl font-bold text-gold-500 font-display" id="userCreditsDisplay">100,000</p>
+              <p class="text-gray-500 text-[10px] mt-1">1 元 = 100 积分</p>
+            </div>
+            <div class="bg-slate-800/50 rounded-xl p-5">
+              <p class="text-gray-400 text-xs mb-2">已消耗积分</p>
+              <p class="text-3xl font-bold text-gray-300 font-display" id="userCreditsUsed">0</p>
+              <p class="text-gray-500 text-[10px] mt-1">累计消费</p>
+            </div>
+          </div>
+
+          <!-- 当前方案 -->
+          <div class="bg-slate-800/50 rounded-xl p-4 mb-4">
+            <p class="text-gray-400 text-xs mb-2">当前接入模型</p>
+            <div class="flex items-center justify-center gap-2">
+              <span class="text-gold-500 font-semibold" id="userCurrentPlan">DeepSeek v4 Flash · 平台代付</span>
+              <button class="text-xs text-gray-500 hover:text-gold-400 transition-colors underline" onclick="navigateTo('settings')">详情</button>
+            </div>
+          </div>
+
+          <!-- 推荐码 -->
+          <div class="bg-slate-800/50 rounded-xl p-4">
+            <p class="text-gray-400 text-sm mb-3">专属推荐码</p>
+            <div class="flex items-center justify-center gap-3">
+              <code class="text-gold-400 text-lg font-mono bg-slate-900 px-4 py-2 rounded-lg">DREAM-X8K2M</code>
+              <button class="p-2 rounded-lg bg-gold-500/10 hover:bg-gold-500/20 transition-colors text-gold-500" onclick="copyReferralCode()">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== 角色上传弹窗 ========== -->
+  <div id="characterModal" class="fixed inset-0 z-[95] bg-black/70 backdrop-blur-sm hidden items-center justify-center">
+    <div class="bg-slate-900 border border-slate-700/60 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl animate-fade-in">
+      <h3 class="text-lg font-semibold text-white mb-5 font-display flex items-center gap-2">
+        <svg class="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        上传角色
+      </h3>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">角色名称 *</label>
+          <input type="text" id="charModalName" placeholder="输入角色名称" class="input-field w-full" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">身高</label>
+            <input type="text" id="charModalHeight" placeholder="输入身高" class="input-field w-full" />
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">道具</label>
+            <input type="text" id="charModalProps" placeholder="输入随身道具" class="input-field w-full" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-2">角色图片</label>
+          <div class="asset-upload-zone" id="charModalUploadZone">
+            <input type="file" accept="image/*" class="hidden" id="charModalFileInput" onchange="previewCharModalImage(event)" />
+            <div id="charModalPreview" class="text-center cursor-pointer" onclick="document.getElementById('charModalFileInput').click()">
+              <svg class="w-8 h-8 text-gray-600 mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <p class="text-xs text-gray-500">点击上传角色图片</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6">
+        <button class="btn-secondary" onclick="closeCharacterModal()">取消</button>
+        <button class="btn-primary" onclick="saveCharacterFromModal()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 场景上传弹窗 ========== -->
+  <div id="sceneModal" class="fixed inset-0 z-[95] bg-black/70 backdrop-blur-sm hidden items-center justify-center">
+    <div class="bg-slate-900 border border-slate-700/60 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl animate-fade-in">
+      <h3 class="text-lg font-semibold text-white mb-5 font-display flex items-center gap-2">
+        <svg class="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        上传场景
+      </h3>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">场景名称 *</label>
+          <input type="text" id="sceneModalName" placeholder="输入场景名称" class="input-field w-full" />
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 mb-2">场景图 - 正面</p>
+          <label class="asset-upload-zone block cursor-pointer" id="sceneModalUploadZone1" for="sceneModalFileInput1">
+            <input type="file" accept="image/*" id="sceneModalFileInput1" onchange="previewSceneModalImage(event, 1)"
+              style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none;" />
+            <div id="sceneModalPreview1" class="text-center">
+              <svg class="w-6 h-6 text-gray-600 mx-auto mb-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <p class="text-xs text-gray-500">上传正面图</p>
+            </div>
+          </label>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 mb-2">场景图 - 反打</p>
+          <label class="asset-upload-zone block cursor-pointer" id="sceneModalUploadZone2" for="sceneModalFileInput2">
+            <input type="file" accept="image/*" id="sceneModalFileInput2" onchange="previewSceneModalImage(event, 2)"
+              style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none;" />
+            <div id="sceneModalPreview2" class="text-center">
+              <svg class="w-6 h-6 text-gray-600 mx-auto mb-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <p class="text-xs text-gray-500">上传反打图</p>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6">
+        <button class="btn-secondary" onclick="closeSceneModal()">取消</button>
+        <button class="btn-primary" onclick="saveSceneFromModal()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 登录/注册弹窗 ========== -->
+  <div id="loginModal" class="fixed inset-0 z-[95] bg-black/70 backdrop-blur-sm hidden items-center justify-center">
+    <div class="bg-slate-900 border border-slate-700/60 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl animate-fade-in text-center">
+      <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gold-500 to-gold-700 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-gold-500/20">
+        <svg class="w-8 h-8 text-slate-950" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      </div>
+      <h3 class="text-lg font-semibold text-white mb-2 font-display">欢迎来到造梦大师</h3>
+      <p class="text-sm text-gray-500 mb-6">请先登录或注册后再进行剧本分析</p>
+      <div class="space-y-3">
+        <button class="btn-primary w-full" onclick="mockLogin()">登录</button>
+        <button class="btn-secondary w-full" onclick="mockLogin()">注册新账号</button>
+      </div>
+      <button class="text-xs text-gray-500 hover:text-gray-400 mt-4" onclick="closeLoginModal()">取消</button>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

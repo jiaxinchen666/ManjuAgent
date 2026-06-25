@@ -1,0 +1,705 @@
+/* ========== 造梦大师 Agent - 全局样式 ========== */
+
+/* ---- 自定义动画关键帧 ---- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 168, 67, 0.3); }
+  50% { box-shadow: 0 0 20px 4px rgba(212, 168, 67, 0.15); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes progressPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ---- 全局滚动条定制 ---- */
+.custom-scrollbar::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.3);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.5);
+}
+
+/* Firefox */
+body, .custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
+}
+
+/* ---- 卡片 ---- */
+.card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.5));
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgba(212, 168, 67, 0.2);
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.3);
+}
+
+/* ---- 输入框 ---- */
+.input-field {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: #e2e8f0;
+  font-size: 0.875rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
+}
+
+.input-field::placeholder {
+  color: rgba(148, 163, 184, 0.4);
+}
+
+.input-field:focus {
+  border-color: rgba(212, 168, 67, 0.5);
+  box-shadow: 0 0 0 3px rgba(212, 168, 67, 0.1);
+}
+
+/* ---- 导航按钮 ---- */
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(148, 163, 184, 0.8);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-btn:hover {
+  color: #e2e8f0;
+  background: rgba(51, 65, 85, 0.4);
+}
+
+.nav-btn.active {
+  color: #D4A843;
+  background: rgba(212, 168, 67, 0.1);
+  border: 1px solid rgba(212, 168, 67, 0.2);
+}
+
+/* ---- 标签按钮 (风格选择) ---- */
+.tag-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  color: rgba(148, 163, 184, 0.8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tag-btn:hover {
+  border-color: rgba(212, 168, 67, 0.4);
+  color: #e2e8f0;
+}
+
+.tag-btn.active {
+  background: linear-gradient(135deg, rgba(212, 168, 67, 0.15), rgba(184, 134, 11, 0.1));
+  border-color: rgba(212, 168, 67, 0.5);
+  color: #D4A843;
+  box-shadow: 0 0 12px -2px rgba(212, 168, 67, 0.2);
+}
+
+/* ---- 主按钮 ---- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0B1120;
+  background: linear-gradient(135deg, #D4A843, #B8860B);
+  box-shadow: 0 4px 16px -2px rgba(212, 168, 67, 0.3);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #E0B84D, #D4A843);
+  box-shadow: 0 6px 24px -2px rgba(212, 168, 67, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ---- 次按钮 ---- */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #D4A843;
+  background: rgba(212, 168, 67, 0.08);
+  border: 1px solid rgba(212, 168, 67, 0.3);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: rgba(212, 168, 67, 0.15);
+  border-color: rgba(212, 168, 67, 0.5);
+}
+
+/* ---- 危险按钮 ---- */
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background: rgba(248, 113, 113, 0.15);
+  border-color: rgba(248, 113, 113, 0.4);
+}
+
+/* ---- 资产上传区域 ---- */
+.asset-upload-zone {
+  border: 2px dashed rgba(51, 65, 85, 0.5);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  margin-top: 0.75rem;
+}
+
+.asset-upload-zone:hover,
+.asset-upload-zone.drag-over {
+  border-color: rgba(212, 168, 67, 0.4);
+  background: rgba(212, 168, 67, 0.03);
+}
+
+/* ---- 资产卡片 ---- */
+.asset-card {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(51, 65, 85, 0.4);
+}
+
+.asset-card:hover {
+  border-color: rgba(212, 168, 67, 0.4);
+  transform: scale(1.02);
+}
+
+.asset-card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.asset-card .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  font-size: 0.6875rem;
+  color: #e2e8f0;
+}
+
+.asset-card:hover .overlay {
+  opacity: 1;
+}
+
+.asset-card .asset-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.25rem 0.5rem;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  font-size: 0.6875rem;
+  color: #e2e8f0;
+  text-align: center;
+}
+
+/* ---- 镜头卡片 ---- */
+.shot-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.5));
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.shot-card:hover {
+  border-color: rgba(212, 168, 67, 0.25);
+}
+
+/* 聊天气泡风格分镜卡片 */
+.shot-bubble {
+  padding: 0.25rem 0;
+  transition: background 0.2s ease;
+}
+
+.shot-bubble:hover {
+  background: rgba(30, 41, 59, 0.15);
+  border-radius: 0.75rem;
+}
+
+.shot-bubble pre[contenteditable] {
+  min-height: 80px;
+}
+
+.shot-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+  background: rgba(212, 168, 67, 0.03);
+}
+
+.shot-card-body {
+  padding: 1.5rem;
+}
+
+/* ---- 富文本编辑器 ---- */
+.prompt-editor {
+  min-height: 160px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  color: #e2e8f0;
+  font-size: 0.8125rem;
+  line-height: 1.8;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.prompt-editor:focus {
+  border-color: rgba(212, 168, 67, 0.5);
+  box-shadow: 0 0 0 3px rgba(212, 168, 67, 0.1);
+}
+
+.prompt-editor .asset-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(212, 168, 67, 0.1);
+  border: 1px solid rgba(212, 168, 67, 0.3);
+  border-radius: 0.375rem;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  color: #D4A843;
+  vertical-align: middle;
+  margin: 0 0.125rem;
+}
+
+.prompt-editor .asset-tag img {
+  width: 18px;
+  height: 18px;
+  border-radius: 0.25rem;
+  object-fit: cover;
+}
+
+/* ---- 拖放区域 ---- */
+#scriptDropHint {
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+#scriptDropHint.drop-zone-active {
+  border-color: rgba(212, 168, 67, 0.7) !important;
+  background: rgba(212, 168, 67, 0.05);
+}
+
+#scriptDropHint.drop-zone-active p {
+  color: rgba(212, 168, 67, 0.9);
+}
+
+/* ---- AI 工作流步骤 ---- */
+.workflow-step {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.step-badge {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: rgba(51, 65, 85, 0.5);
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  color: rgba(148, 163, 184, 0.6);
+  transition: all 0.3s ease;
+}
+
+.step-badge.done {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #4ade80;
+}
+
+.step-badge.active {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.5);
+  color: #c084fc;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+}
+
+.step-badge.spinning {
+  animation: spin 1s linear infinite;
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.5);
+  color: #c084fc;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ---- 视频卡片 ---- */
+.video-card {
+  position: relative;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(51, 65, 85, 0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.video-card:hover {
+  border-color: rgba(212, 168, 67, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+}
+
+.video-card .video-thumb {
+  position: relative;
+  aspect-ratio: 16/9;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-card .video-thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  transition: background 0.3s ease;
+}
+
+.video-card:hover .video-thumb::after {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.video-card .play-icon {
+  position: absolute;
+  z-index: 10;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(212, 168, 67, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s ease;
+}
+
+.video-card:hover .play-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.video-card .video-info {
+  padding: 0.75rem 1rem;
+  background: rgba(15, 23, 42, 0.8);
+}
+
+/* ---- Toast ---- */
+.toast {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  backdrop-filter: blur(12px);
+  animation: slideUp 0.3s ease-out forwards;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+}
+
+.toast-success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+}
+
+.toast-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.toast-warning {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+
+/* ---- Loading 骨架 ---- */
+.skeleton {
+  background: linear-gradient(90deg, rgba(51, 65, 85, 0.3) 25%, rgba(51, 65, 85, 0.5) 50%, rgba(51, 65, 85, 0.3) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+  border-radius: 0.5rem;
+}
+
+/* ---- 分辨率选择 ---- */
+.resolution-btn {
+  padding: 0.375rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  background: rgba(15, 23, 42, 0.6);
+  color: rgba(148, 163, 184, 0.8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resolution-btn.active {
+  border-color: rgba(212, 168, 67, 0.5);
+  background: rgba(212, 168, 67, 0.1);
+  color: #D4A843;
+}
+
+/* ---- 生成进度条 ---- */
+.generation-progress {
+  height: 4px;
+  background: rgba(51, 65, 85, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.generation-progress .bar {
+  height: 100%;
+  background: linear-gradient(90deg, #D4A843, #B8860B);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+  animation: progressPulse 1.5s ease-in-out infinite;
+}
+
+/* ---- 模态弹窗动画 ---- */
+#modalOverlay.show {
+  display: flex;
+}
+
+/* ---- 文字超限红色提示 ---- */
+.text-over-limit {
+  color: #f87171 !important;
+}
+
+/* ---- 页面过渡 ---- */
+.page-section {
+  opacity: 0;
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.page-section.hidden {
+  display: none;
+  animation: none;
+}
+
+/* ---- 侧边栏资产卡片（镜头制作页用） ---- */
+.sidebar-asset {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid rgba(51, 65, 85, 0.4);
+  transition: all 0.2s ease;
+  aspect-ratio: 1;
+  background: rgba(30, 41, 59, 0.4);
+}
+
+.sidebar-asset:hover {
+  border-color: rgba(212, 168, 67, 0.5);
+  box-shadow: 0 0 8px rgba(212, 168, 67, 0.15);
+}
+
+.sidebar-asset img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sidebar-asset .label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.125rem 0.25rem;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  font-size: 0.625rem;
+  color: #e2e8f0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- 设置页 A/B 方案 Tab ---- */
+.plan-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(148, 163, 184, 0.7);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.plan-tab:hover {
+  color: #e2e8f0;
+}
+
+.plan-tab.active {
+  background: linear-gradient(135deg, rgba(212, 168, 67, 0.12), rgba(184, 134, 11, 0.08));
+  color: #D4A843;
+  box-shadow: 0 2px 8px -2px rgba(212, 168, 67, 0.2);
+}
+
+/* ---- 分集视频子导航 ---- */
+.sub-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(148, 163, 184, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.sub-nav-btn:hover {
+  color: #e2e8f0;
+}
+
+.sub-nav-btn.active {
+  background: rgba(212, 168, 67, 0.1);
+  color: #D4A843;
+}
+
+/* ---- Select 下拉框 ---- */
+select.input-field {
+  background-image: none;
+}
+
+select.input-field option {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 0.5rem;
+}
+
+/* ---- 响应式调整 ---- */
+@media (max-width: 768px) {
+  #topNav {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  #navMenu {
+    display: none;
+  }
+
+  .shot-card-body {
+    padding: 1rem;
+  }
+}

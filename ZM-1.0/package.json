@@ -1,0 +1,21 @@
+{
+  "name": "zaomeng-agent",
+  "version": "1.0.0",
+  "description": "造梦大师 Agent - 影视工业级短剧 AI 生成工具",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "setup:seedance": "python3 -m pip install --target ./python_deps -r requirements-seedance.txt"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "https-proxy-agent": "^9.0.0",
+    "mammoth": "^1.12.0",
+    "multer": "^2.1.1",
+    "undici": "^8.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
