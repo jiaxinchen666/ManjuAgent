@@ -10,6 +10,7 @@ HOST_PORT="${HOST_PORT:-8800}"
 CONTAINER_PORT="${CONTAINER_PORT:-8800}"
 DATA_DIR="${DATA_DIR:-/opt/manju-agent}"
 APP_DIR="${APP_DIR:-/workspace/app/ZM-1.0}"
+DOCKER_NETWORK="${DOCKER_NETWORK:-deployment}"
 MODE="${1:-app}"
 
 if [[ "$MODE" != "app" && "$MODE" != "setup" && "$MODE" != "shell" ]]; then
@@ -27,6 +28,15 @@ fi
 
 mkdir -p "$DATA_DIR"
 
+if [[ -n "$DOCKER_NETWORK" ]] && ! docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1; then
+  docker network create "$DOCKER_NETWORK" >/dev/null
+fi
+
+NETWORK_ARGS=()
+if [[ -n "$DOCKER_NETWORK" ]]; then
+  NETWORK_ARGS+=(--network "$DOCKER_NETWORK")
+fi
+
 docker build -t "$IMAGE" -f "${PROJECT_DIR}/deploy/Dockerfile" "$PROJECT_DIR"
 
 docker rm -f "$NAME" >/dev/null 2>&1 || true
@@ -35,6 +45,7 @@ if [[ "$MODE" == "setup" ]]; then
   docker run -d \
     --name "$NAME" \
     --restart unless-stopped \
+    "${NETWORK_ARGS[@]}" \
     -p "${HOST_PORT}:${CONTAINER_PORT}" \
     -v "${DATA_DIR}:/workspace" \
     -w /workspace \
@@ -51,7 +62,7 @@ Next:
   git clone <YOUR_REPO_URL> app
 
 After the code is ready, restart as the app container:
-  APP_DIR=${APP_DIR} HOST_PORT=${HOST_PORT} CONTAINER_PORT=${CONTAINER_PORT} ${PROJECT_DIR}/deploy/run-container.sh app
+  APP_DIR=${APP_DIR} HOST_PORT=${HOST_PORT} CONTAINER_PORT=${CONTAINER_PORT} DOCKER_NETWORK=${DOCKER_NETWORK} ${PROJECT_DIR}/deploy/run-container.sh app
 EOF
   exit 0
 fi
@@ -59,6 +70,7 @@ fi
 docker run -d \
   --name "$NAME" \
   --restart unless-stopped \
+  "${NETWORK_ARGS[@]}" \
   -p "${HOST_PORT}:${CONTAINER_PORT}" \
   -v "${DATA_DIR}:/workspace" \
   -e "APP_DIR=${APP_DIR}" \
@@ -77,4 +89,7 @@ Health check:
 
 Logs:
   docker logs -f ${NAME}
+
+Docker network:
+  ${DOCKER_NETWORK}
 EOF

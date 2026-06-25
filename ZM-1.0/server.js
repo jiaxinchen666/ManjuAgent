@@ -80,7 +80,18 @@ if (!fs.existsSync(generatedVideosDir)) fs.mkdirSync(generatedVideosDir, { recur
 
 app.use(express.json({ limit: '20mb' }));
 app.use('/generated-videos', express.static(generatedVideosDir));
+app.use('/manju-generated-videos', express.static(generatedVideosDir));
+app.use('/manju', express.static(path.join(__dirname, '1.0')));
 app.use(express.static(path.join(__dirname, '1.0')));
+
+app.use((req, _res, next) => {
+  if (req.url === '/manju-api') {
+    req.url = '/api';
+  } else if (req.url.startsWith('/manju-api/')) {
+    req.url = `/api/${req.url.slice('/manju-api/'.length)}`;
+  }
+  next();
+});
 
 // ========== 工具函数 ==========
 
@@ -1404,7 +1415,7 @@ app.post('/api/video-task/:taskId/download', async (req, res) => {
     res.json({
       success: true,
       path: result.path,
-      url: `/generated-videos/${filename}`
+      url: `${req.originalUrl.startsWith('/manju-api') ? '/manju-generated-videos' : '/generated-videos'}/${filename}`
     });
   } catch (e) {
     handleError(res, 'Seedance 下载视频', e);

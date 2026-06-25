@@ -1,5 +1,12 @@
 /* ========== 造梦大师 Agent - 主逻辑 ========== */
 
+const MANJU_ROUTE_PREFIX = window.location.pathname === '/manju' || window.location.pathname.startsWith('/manju/');
+const API_BASE = MANJU_ROUTE_PREFIX ? '/manju-api' : '/api';
+
+function apiPath(path) {
+  return `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
 // ============ 首页逻辑 ============
 function initHomePage() {
   // 首页不再加载任何预置项目，保持完全空白的新建入口。
@@ -65,7 +72,7 @@ async function handleAnalyzeFromPage() {
   showFullscreenLoading('编剧 Agent 正在深度解析剧本结构、人物小传与镜头拆分...');
 
   try {
-    const resp = await fetch('/api/analyze-script', {
+    const resp = await fetch(apiPath('/analyze-script'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -239,7 +246,7 @@ async function handleFileFromObject(file) {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const resp = await fetch('/api/parse-docx', { method: 'POST', body: formData });
+      const resp = await fetch(apiPath('/parse-docx'), { method: 'POST', body: formData });
       const json = await resp.json();
       if (!resp.ok) throw new Error(json.error || '解析失败');
       fillScriptTextarea(json.text, file.name);
@@ -397,7 +404,7 @@ function handleAnalyzeScript() {
 
       try {
         const selectedModel = document.getElementById('planA_analysisModel')?.value || 'deepseek';
-        const resp = await fetch('/api/analyze-script', {
+        const resp = await fetch(apiPath('/analyze-script'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -915,7 +922,7 @@ async function pollVideoTask(taskId, index) {
     await wait(attempt === 1 ? 3000 : 10000);
     setShotProgress(index, Math.min(92, 12 + attempt * 4));
 
-    const resp = await fetch(`/api/video-task/${encodeURIComponent(taskId)}`);
+    const resp = await fetch(apiPath(`/video-task/${encodeURIComponent(taskId)}`));
     const json = await resp.json();
     if (!resp.ok || !json.success) throw new Error(json.error || '查询视频任务失败');
 
@@ -959,7 +966,7 @@ function handleGenerateVideo(index) {
       updateShotGenerateButton(index, '创建任务...', true);
 
       try {
-        const createResp = await fetch('/api/generate-video', {
+        const createResp = await fetch(apiPath('/generate-video'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -981,7 +988,7 @@ function handleGenerateVideo(index) {
 
         setShotProgress(index, 96);
         updateShotGenerateButton(index, '下载中...', true);
-        const downloadResp = await fetch(`/api/video-task/${encodeURIComponent(created.taskId)}/download`, {
+        const downloadResp = await fetch(apiPath(`/video-task/${encodeURIComponent(created.taskId)}/download`), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ shotNumber: index + 1 })
@@ -1374,7 +1381,7 @@ async function runBackgroundWorkflow() {
         const shotDescs = shotsForImg
           .filter(s => s.scene && s.scene.includes(scene.name))
           .map(s => s.action_desc).filter(Boolean);
-        const resp = await fetch('/api/analyze-scene-space', {
+        const resp = await fetch(apiPath('/analyze-scene-space'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ imageBase64: scene.image, sceneName: scene.name, scriptText: scriptTextForImg, shotDescriptions: shotDescs })
@@ -1396,7 +1403,7 @@ async function runBackgroundWorkflow() {
 
       const results2 = await Promise.allSettled(scenesWithoutImages.map(async (scene) => {
         const shotDescs = shots.filter(s => s.scene && s.scene.includes(scene.name)).map(s => s.action_desc).filter(Boolean);
-        const resp = await fetch('/api/analyze-scene-space-from-script', {
+        const resp = await fetch(apiPath('/analyze-scene-space-from-script'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sceneName: scene.name, scriptText, shotDescriptions: shotDescs })
@@ -1435,7 +1442,7 @@ async function runBackgroundWorkflow() {
     const lbl3 = document.getElementById('loadStep3Label');
     if (lbl3) lbl3.textContent = '（已合并至上一步）';
 
-    const resp = await fetch('/api/director-prompts', {
+    const resp = await fetch(apiPath('/director-prompts'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1676,7 +1683,7 @@ async function sendAgentMessage() {
     // 剥离图片数据，避免 base64 撑爆请求体
     const charsLite = AppState.characters.map(c => ({ id: c.id, name: c.name, height: c.height, props: c.props }));
     const scenesLite = AppState.scenes.map(s => ({ id: s.id, name: s.name }));
-    const resp = await fetch('/api/chat-agent', {
+    const resp = await fetch(apiPath('/chat-agent'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2231,7 +2238,7 @@ async function analyzeSceneSpace(sceneId) {
         .filter(s => s.scene && s.scene.includes(scene.name))
         .map(s => s.action_desc)
         .filter(Boolean);
-      resp = await fetch('/api/analyze-scene-space', {
+      resp = await fetch(apiPath('/analyze-scene-space'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageBase64: scene.image, sceneName: scene.name, scriptText, shotDescriptions: shotDescs })
@@ -2244,7 +2251,7 @@ async function analyzeSceneSpace(sceneId) {
         .filter(s => s.scene && s.scene.includes(scene.name))
         .map(s => s.action_desc)
         .filter(Boolean);
-      resp = await fetch('/api/analyze-scene-space-from-script', {
+      resp = await fetch(apiPath('/analyze-scene-space-from-script'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sceneName: scene.name, scriptText, shotDescriptions: shotDescs })
@@ -2478,7 +2485,7 @@ async function handleCreateShots() {
   showFullscreenLoading('总导演正在制定工业级分镜方案...');
 
   try {
-    const resp = await fetch('/api/create-shots', {
+    const resp = await fetch(apiPath('/create-shots'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2526,7 +2533,7 @@ async function handleWritePrompts() {
   showFullscreenLoading('AI导演正在写 Seedance 2.0 提示词...');
 
   try {
-    const resp = await fetch('/api/write-prompts', {
+    const resp = await fetch(apiPath('/write-prompts'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2581,7 +2588,7 @@ async function handleReviewPrompts() {
   showFullscreenLoading('总导演正在检查连贯性、专业性与视听语言...');
 
   try {
-    const resp = await fetch('/api/review-prompts', {
+    const resp = await fetch(apiPath('/review-prompts'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2625,7 +2632,7 @@ async function handleRevisePrompts() {
   showFullscreenLoading('AI导演正在根据总导演意见修改提示词...');
 
   try {
-    const resp = await fetch('/api/revise-prompts', {
+    const resp = await fetch(apiPath('/revise-prompts'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
