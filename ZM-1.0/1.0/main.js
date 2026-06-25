@@ -856,7 +856,7 @@ function selectResolution(btn, index) {
   btn.classList.add('active');
 
   const res = btn.dataset.res;
-  const costPerSec = res === '1080' ? 210 : 105;
+  const costPerSec = getVideoCostPerSecond(res);
   const totalCost = 600 + costPerSec * getShotDurationSeconds(index);
   const costEl = document.getElementById(`shot-cost-${index}`);
   if (costEl) costEl.textContent = totalCost.toLocaleString();
@@ -933,6 +933,10 @@ function hideShotProgress(index) {
   if (progressEl) progressEl.classList.add('hidden');
 }
 
+function getVideoCostPerSecond(resolution) {
+  return String(resolution) === '1080' ? 210 : 105;
+}
+
 async function pollVideoTask(taskId, index) {
   const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
   const maxAttempts = 90;
@@ -959,8 +963,8 @@ async function pollVideoTask(taskId, index) {
 
 function handleGenerateVideo(index) {
   const resBtn = document.querySelector(`#shot-card-${index} .resolution-btn.active`);
-  const res = resBtn ? resBtn.dataset.res : '720';
-  const costPerSec = res === '1080' ? 210 : 105;
+  const res = resBtn ? resBtn.dataset.res : '480';
+  const costPerSec = getVideoCostPerSecond(res);
   const requestedDuration = getShotRequestedDurationSeconds(index);
   const duration = getShotDurationSeconds(index);
   const totalCost = 600 + costPerSec * duration;
