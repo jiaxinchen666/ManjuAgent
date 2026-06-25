@@ -160,7 +160,8 @@ function runSeedanceBridge(command, payload, { timeoutMs = 180000 } = {}) {
         return reject(new Error(`Seedance bridge JSON 解析失败：${jsonLine.slice(0, 500)}`));
       }
       if (code !== 0 || !parsed.success) {
-        return reject(new Error(parsed.error || stderr.slice(0, 500) || `Seedance bridge 退出码 ${code}`));
+        const detail = stderr.trim() ? `；详情：${stderr.slice(-1000)}` : '';
+        return reject(new Error(`${parsed.error || `Seedance bridge 退出码 ${code}`}${detail}`));
       }
       resolve(parsed);
     });
@@ -171,10 +172,12 @@ function runSeedanceBridge(command, payload, { timeoutMs = 180000 } = {}) {
 }
 
 function parseDurationSeconds(value, fallback = 10) {
-  if (typeof value === 'number' && Number.isFinite(value)) return Math.max(1, Math.round(value));
-  const match = String(value || '').match(/(\d+(?:\.\d+)?)/);
-  if (!match) return fallback;
-  return Math.max(1, Math.round(Number(match[1])));
+  const raw = typeof value === 'number' && Number.isFinite(value)
+    ? value
+    : Number(String(value || '').match(/(\d+(?:\.\d+)?)/)?.[1] || fallback);
+  const seconds = Number.isFinite(raw) ? Math.max(1, Math.round(raw)) : fallback;
+  // 当前 MaaS Seedance 2.0 t2v 接口会拒绝 1/3 秒等分镜时长；5 秒已验证可创建任务。
+  return seconds <= 5 ? 5 : 10;
 }
 
 function safeFilenamePart(value) {
