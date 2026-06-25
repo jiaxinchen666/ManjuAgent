@@ -544,6 +544,11 @@ function parseDuration(d) {
   return m ? parseFloat(m[1]) : 3;
 }
 
+function normalizeSeedanceDuration(seconds) {
+  const value = Number.isFinite(seconds) && seconds > 0 ? Math.round(seconds) : 3;
+  return value <= 5 ? 5 : 10;
+}
+
 function groupShotsBy15s(shots) {
   const segments = [];
   let cur = { shots: [], duration: 0 };
@@ -852,8 +857,9 @@ function selectResolution(btn, index) {
 
   const res = btn.dataset.res;
   const costPerSec = res === '1080' ? 210 : 105;
-  const totalCost = 600 + costPerSec * 10;
-  document.getElementById(`shot-cost-${index}`).textContent = totalCost.toLocaleString();
+  const totalCost = 600 + costPerSec * getShotDurationSeconds(index);
+  const costEl = document.getElementById(`shot-cost-${index}`);
+  if (costEl) costEl.textContent = totalCost.toLocaleString();
 }
 
 function updateEditorCharCount(index) {
@@ -886,10 +892,23 @@ function getShotVideoPrompt(index) {
   return (shot.fullPrompt || shot.prompt || shot.singlePrompt || shot.description || '').trim();
 }
 
-function getShotDurationSeconds(index) {
+function getShotRequestedDurationSeconds(index) {
   const shot = AppState.analysis?.shots?.[index] || {};
-  const seconds = parseDuration(shot.duration || '10秒');
-  return Number.isFinite(seconds) && seconds > 0 ? Math.round(seconds) : 10;
+  const editorText = document.getElementById(`editor-${index}`)?.innerText || '';
+  const promptText = [
+    editorText,
+    shot.fullPrompt,
+    shot.prompt,
+    shot.singlePrompt,
+    shot.description
+  ].filter(Boolean).join('\n');
+  const promptDuration = promptText.match(/时长[：:]\s*(\d+(?:\.\d+)?)\s*秒/);
+  const sourceDuration = shot.duration || (promptDuration ? `${promptDuration[1]}秒` : '3秒');
+  return parseDuration(sourceDuration);
+}
+
+function getShotDurationSeconds(index) {
+  return normalizeSeedanceDuration(getShotRequestedDurationSeconds(index));
 }
 
 function updateShotGenerateButton(index, text, loading = false) {
@@ -942,6 +961,7 @@ function handleGenerateVideo(index) {
   const resBtn = document.querySelector(`#shot-card-${index} .resolution-btn.active`);
   const res = resBtn ? resBtn.dataset.res : '720';
   const costPerSec = res === '1080' ? 210 : 105;
+  const requestedDuration = getShotRequestedDurationSeconds(index);
   const duration = getShotDurationSeconds(index);
   const totalCost = 600 + costPerSec * duration;
   const prompt = getShotVideoPrompt(index);
@@ -953,7 +973,7 @@ function handleGenerateVideo(index) {
 
   showModal({
     title: '确认开始造梦',
-    message: `镜头 #${index + 1}\n分辨率：${res}P\n时长：${duration} 秒\n基础算力：600 积分\n视频生成：${(costPerSec * duration).toLocaleString()} 积分\n总消耗：${totalCost.toLocaleString()} 积分`,
+    message: `镜头 #${index + 1}\n分辨率：${res}P\n分镜时长：${requestedDuration} 秒\nSeedance实际生成：${duration} 秒\n基础算力：600 积分\n视频生成：${(costPerSec * duration).toLocaleString()} 积分\n总消耗：${totalCost.toLocaleString()} 积分`,
     confirmText: '开始造梦',
     onConfirm: async () => {
       if (AppState.credits < totalCost) {
